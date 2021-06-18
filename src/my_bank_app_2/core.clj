@@ -523,7 +523,7 @@
    "jugar no tengo amigos" the-game
    "no quiero hacer nada"  #(println "adios")})
 
-(defn- option-number->option-fn
+(defn- option-index->option-fn
   [option-index]
   (nth (vals application-options)
        (dec option-index)
@@ -548,7 +548,7 @@
 (defn start-app-menu! []
   (print-app-options!)
   (let [option-index     (-> application-options count get-input! Integer.)
-        option-function! (option-number->option-fn option-index)]
+        option-function! (option-index->option-fn option-index)]
     (option-function!)))
 
 (defn -main
