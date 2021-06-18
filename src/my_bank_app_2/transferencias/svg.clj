@@ -63,10 +63,10 @@
             ingresa tu pais actual, da enter
             ingresa el pais destino, da enter
             ingresa la hora, da enter")
-  (let [transaction-data  (seq [(read-line) (read-line) (read-line) (read-line) (read-line)])
-        map-transaction {:curren-required [(first transaction-data ) (second transaction-data )]
-                         :origin-destiny [(nth transaction-data 2) (nth transaction-data 3)]
-                         :hour (nth transaction-data 4)}
+  (let [[balance ammount origin destiny hour]  (seq [(read-line) (read-line) (read-line) (read-line) (read-line)])
+        map-transaction {:curren-required [balance ammount]
+                         :origin-destiny [origin destiny]
+                         :hour hour}
         my-error-name (validate map-transaction transaction-validation)]
     (if-valid map-transaction transaction-validation my-error-name
               (println :success)

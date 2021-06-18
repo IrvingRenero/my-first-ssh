@@ -116,22 +116,21 @@
   []
   "crea el map especial a usar en la validación de credit"
   (println "ingresa tu salario, da enter;
-            ingresa el monto de creido que solicitas, da enter
+            ingresa el monto de credito que solicitas, da enter
             ingresa el tipo de credito: tradicional/hipotecario, da enter
             ingresa el plazo que te gustaria")
-  (let [credit-data  (seq [(read-line) (read-line) (read-line) (read-line)])
-        map-credit {:salary (nth credit-data 0)
-                    :ammount-of-credit (nth credit-data 1)
-                    :credit-type  (nth credit-data 2)
-                    :months (nth credit-data 3)
-                    :credit_approval [(Integer. (nth credit-data 0)) (Integer. (nth credit-data 1)) (nth credit-data 2) (Integer. (nth credit-data 3))]}
+  (let [[salary ammount type time]  (seq [(read-line) (read-line) (read-line) (read-line)])
+        map-credit {:salary salary
+                    :ammount-of-credit ammount
+                    :credit-type  type
+                    :months time
+                    :credit_approval [(Integer. salary) (Integer. ammount) type (Integer. time)]}
         my-error-name (validate map-credit credit-validation)]
     (if-valid map-credit  credit-validation my-error-name
               ((println :success )
-               (println (str "felicidades tu crédito fue aprobado por: " (nth credit-data 1)) )
+               (println (str "felicidades tu crédito fue aprobado por: " ammount) )
                (println (str "tus mensualidades seran de: " (real-monthly-payment (get map-credit :credit_approval)) " MXN"))
                (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%") )
                (println (str "tu pago en el plazo total sera: "  (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) "MXN"))
-               (println (str "el monto por intereses que pagaras en total sera de: " (- (nth credit-data 1) (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))))))
-               (println (str "gracias " "por tu preferencia")))
+               (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount) ))))
               (println :failure my-error-name))))

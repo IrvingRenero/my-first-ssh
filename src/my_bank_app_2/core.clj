@@ -74,8 +74,8 @@
   []
   ;;related function with option 2
   (println "ingresa un nombre, da enter; ingresa tu email da enter")
-  (let [new-profile-data  (seq [(read-line) (read-line)])
-        map-newprofile {:name (first new-profile-data) :email (second new-profile-data)}
+  (let [[name email ] (seq [(read-line) (read-line)])
+        map-newprofile {:name name :email email}
         my-error-name (validate map-newprofile new-profile-validations)]
     (if-valid map-newprofile new-profile-validations my-error-name
               (do (println "has creado un nuevo perfil") (multiple-options))
