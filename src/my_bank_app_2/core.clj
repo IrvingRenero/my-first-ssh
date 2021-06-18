@@ -516,41 +516,40 @@
 ;; to choose what is going to do the program;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defn- what-option
-  [options]
-  (if  (= 1 options) (transfer)
-       (if (= 2 options) (add-new-profile)
-           (if (= 3 options) (credit)
-               (if (= 4 options) (the-game)
-                   (if (= 5 options) (println "adios")
-                       (multiple-options)))))))
-(defn- get-input
+(def ^:private application-options
+  {"transferencia"         transfer
+   "crear un perfil"       add-new-profile
+   "solicitar un credito"  credit
+   "jugar no tengo amigos" the-game
+   "no quiero hacer nada"  #(println "adios")})
+
+(defn- option-number->option-fn
+  [option-index]
+  (nth (vals application-options)
+       (dec option-index)
+       multiple-options))
+
+(defn- get-input!
   "Waits for user to enter text and hit enter, then cleans the input"
-  ([] (get-input nil))
+  ([] (get-input! nil))
   ([default]
    (let [input (clojure.string/trim (read-line))]
      (if (empty? input)
        default
        (clojure.string/lower-case input)))))
 
-(def ^:private application-options
-  ["transferencia"
-   "crear un perfil"
-   "solicitar un credito"
-   "jugar no tengo amigos"
-   "no quiero hacer nada"])
-
 (def ^:private app-options
   (map-indexed (fn [index text] (str (inc index) ". " text ":"))
-               application-options))
+               (keys application-options)))
 
 (defn print-app-options! []
   (doall (map println app-options)))
 
 (defn start-app-menu! []
   (print-app-options!)
-  (let [option (Integer. (get-input 5))]
-    (what-option option)))
+  (let [option-index     (-> application-options count get-input! Integer.)
+        option-function! (option-number->option-fn option-index)]
+    (option-function!)))
 
 (defn -main
   []
