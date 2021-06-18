@@ -527,7 +527,7 @@
   [option-index]
   (nth (vals application-options)
        (dec option-index)
-       multiple-options))
+       nil))
 
 (defn- get-input!
   "Waits for user to enter text and hit enter, then cleans the input"
@@ -549,7 +549,11 @@
   (print-app-options!)
   (let [option-index     (-> application-options count get-input! Integer.)
         option-function! (option-index->option-fn option-index)]
-    (option-function!)))
+    (if option-function!
+      (option-function!)
+      (do (println "Opción inválida\n")
+          (recur)))
+    ))
 
 (defn -main
   []
