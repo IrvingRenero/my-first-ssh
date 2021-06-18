@@ -1,32 +1,27 @@
 (ns my-bank-app-2.core)
 
-(declare what-option multiple-options get-input)
+(declare what-option
+         multiple-options
+         get-input)
 
-
-
-;;we begin the code for create a new-profile 22222222222222222222222222222222222222222222222222222222222
-
+;;we begin the code for create a new-profile
 ;example for to-validate
 #_(def order-details
     {:name "Mitchard Blimmons"
      :email "mitchard.blimmonsgmail.com"})
 
 (def new-profile-validations
-  "vector for validate with new-profile"
-  {:name
-   ["Please enter a name" not-empty]
-   :email
-   ["Please enter an email address" not-empty
-    "Your email address doesn't look like an email address"
-    #(or (empty? %) (re-seq #"@" %))]})
-
+  "vector for validating with new-profile"
+  {:name  ["Please enter a name" not-empty]
+   :email ["Please enter an email address" not-empty
+           "Your email address doesn't look like an email address"
+           #(or (empty? %) (re-seq #"@" %))]})
 
 (defn error-messages-for
   "Return a seq of error messages"
   [to-validate message-validator-pairs]
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
-
 
 (defn validate
   "Returns a map with a vector of errors for each key"
@@ -320,7 +315,6 @@
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
 
-
 (defn validate
   "Returns a map with a vector of errors for each key"
   [to-validate validations]
@@ -334,14 +328,12 @@
           {}
           validations))
 
-
 (defmacro if-valid
   "Handle validation more concisely"
   [to-validate validations errors-name & then-else]
   `(let [~errors-name (validate ~to-validate ~validations)]
      (if (empty? ~errors-name)
        ~@then-else)))
-
 
 #_(macroexpand
     '(if-valid order-details order-details-validations my-error-name
@@ -360,8 +352,8 @@
 
 (defn transfer
   []
-  (println "ingresa cuanto tienes, da enter;
-            ingresa cuanto quieres transferir, da enter
+  (println "ingresa cuánto tienes, da enter;
+            ingresa cuánto quieres transferir, da enter
             ingresa tu pais actual, da enter
             ingresa el pais destino, da enter
             ingresa la hora, da enter")
@@ -380,21 +372,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;here start the code for credit;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;I also could make a map with map in the keys for use key to navegate;;;;;;;
-(def credit-example {:salary  "100000"
-                     :ammount-of-credit "6000000"
-                     :credit-type "hipotecario"
-                     :months "36"
-                     :credit_approval  [10000 6000000 "hipotecario" 36]})
+(def credit-example
+  {:salary            "100000"
+   :ammount-of-credit "6000000"
+   :credit-type       "hipotecario"
+   :months            "36"
+   :credit_approval   [10000 6000000 "hipotecario" 36]})
 
 (defn traditional-interest-anual
   [creddit-approval]
-  (if  (>= (last creddit-approval)  48 ) 0.28
-                                         (if (>= (last creddit-approval) 36) 0.25
-                                                                             (if (>= (last creddit-approval) 24) 0.22
-                                                                                                                 (if (>= (last creddit-approval) 18) 0.21
-                                                                                                                                                     (if (>= (last creddit-approval) 12) 0.2
-                                                                                                                                                                                         (println "el plazo es muy corto")))))))
-(defn exp [x n] (if (zero? n) 1 (* x (exp x (dec n)))))
+  (cond
+    (>= (last creddit-approval)  48 )
+    0.28
+
+    (>= (last creddit-approval) 36)
+    0.25
+
+    (>= (last creddit-approval) 24)
+    0.22
+
+    (>= (last creddit-approval) 18)
+    0.21
+
+    (>= (last creddit-approval) 12)
+    (println "el plazo es muy corto")
+    (comment println es un efecto secundario, devuelve un string
+             )))
+
+(defn exp [x n]
+  (if (zero? n)
+    1
+    (* x (exp x (dec n)))))
 
 (defn payment-ammount
   "real amortization formula"
@@ -423,14 +431,13 @@
     (let [interests  (traditional-interest-monthly creddit-approval)] interests)))
 
 (defn real-monthly-payment
-  "it give you the real ammount for payment with the real amoritzation formula choosing hipotecary or traditional credit"
+  "it gives you the real ammount for payment with the real amoritzation formula choosing hipotecary or traditional credit"
   [creddit-approval]
   (if (= (nth creddit-approval 2) "hipotecario" )
-    (let [interests  (hipotecay-interest-monthly  creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval) ))
-    (let [interests  (traditional-interest-monthly creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
-
-
-
+    (let [interests  (hipotecay-interest-monthly  creddit-approval)]
+      (payment-ammount interests (last creddit-approval) (second creddit-approval) ))
+    (let [interests  (traditional-interest-monthly creddit-approval)]
+      (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
 
 (defn error-messages-for
   "Return a seq of error messages"
@@ -438,14 +445,13 @@
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
 
-
 (defn validate
   "Returns a map with a vector of errors for each key"
   [to-validate validations]
   (reduce (fn [errors validation]
             (let [[fieldname validation-check-groups] validation
-                  value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
+                  value                               (get to-validate fieldname)
+                  error-messages                      (error-messages-for value validation-check-groups)]
               (if (empty? error-messages)
                 errors
                 (assoc errors fieldname error-messages))))
