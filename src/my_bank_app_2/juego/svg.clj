@@ -1,6 +1,5 @@
 (ns my-bank-app-2.juego.svg)
 
-
 (declare successful-move prompt-move game-over query-rows prompt-rows)
 
 (defn tri*
@@ -135,7 +134,7 @@
   (str (nth letters (dec pos))
        (if (get-in board [pos :pegged])
          "0"
-         "-" )))
+         "-")))
 (defn row-positions
   "Return all positions in the given row"
   [row-num]
