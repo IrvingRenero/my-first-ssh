@@ -391,8 +391,7 @@
     0.21
 
     (>= (last creddit-approval) 12)
-    (println "el plazo es muy corto")
-    (comment println es un efecto secundario, devuelve un string)))
+    (println "el plazo es muy corto")))
 
 (defn exp [x n]
   (if (zero? n)
@@ -517,7 +516,7 @@
 ;; to choose what is going to do the program;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defn what-option
+(defn- what-option
   [options]
   (if  (= 1 options) (transfer)
        (if (= 2 options) (add-new-profile)
@@ -525,7 +524,7 @@
                (if (= 4 options) (the-game)
                    (if (= 5 options) (println "adios")
                        (multiple-options)))))))
-(defn get-input
+(defn- get-input
   "Waits for user to enter text and hit enter, then cleans the input"
   ([] (get-input nil))
   ([default]
@@ -534,18 +533,25 @@
        default
        (clojure.string/lower-case input)))))
 
-(defn multiple-options
-  []
-  "give you the possible options with the app"
-  (println "que quieres hacer ahora, escribe el numero
-  1 transferencia;
-  2 crear un perfil;
-  3 solicitar un credito;
-  4 jugar no tengo amigos
-  5 no quiero hacer nada")
-  (let [options (Integer. (get-input 5))]
-    (what-option options)))
+(def ^:private application-options
+  ["transferencia"
+   "crear un perfil"
+   "solicitar un credito"
+   "jugar no tengo amigos"
+   "no quiero hacer nada"])
+
+(def ^:private app-options
+  (map-indexed (fn [index text] (str (inc index) ". " text ":"))
+               application-options))
+
+(defn print-app-options! []
+  (doall (map println app-options)))
+
+(defn start-app-menu! []
+  (print-app-options!)
+  (let [option (Integer. (get-input 5))]
+    (what-option option)))
 
 (defn -main
   []
-  (multiple-options))
+  (start-app-menu!))
