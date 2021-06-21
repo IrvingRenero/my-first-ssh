@@ -391,7 +391,8 @@
     0.21
 
     (>= (last creddit-approval) 12)
-    (println "el plazo es muy corto")))
+    (println "el plazo es muy corto")
+    (comment println es un efecto secundario, devuelve un string)))
 
 (defn exp [x n]
   (if (zero? n)
@@ -516,45 +517,35 @@
 ;; to choose what is going to do the program;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(def ^:private application-options
-  {"transferencia"         transfer
-   "crear un perfil"       add-new-profile
-   "solicitar un credito"  credit
-   "jugar no tengo amigos" the-game
-   "no quiero hacer nada"  #(println "adios")})
-
-(defn- option-index->option-fn
-  [option-index]
-  (nth (vals application-options)
-       (dec option-index)
-       nil))
-
-(defn- get-input!
+(defn what-option
+  [options]
+  (if  (= 1 options) (transfer)
+       (if (= 2 options) (add-new-profile)
+           (if (= 3 options) (credit)
+               (if (= 4 options) (the-game)
+                   (if (= 5 options) (println "adios")
+                       (multiple-options)))))))
+(defn get-input
   "Waits for user to enter text and hit enter, then cleans the input"
-  ([] (get-input! nil))
+  ([] (get-input nil))
   ([default]
    (let [input (clojure.string/trim (read-line))]
      (if (empty? input)
        default
        (clojure.string/lower-case input)))))
 
-(def ^:private app-options
-  (map-indexed (fn [index text] (str (inc index) ". " text ":"))
-               (keys application-options)))
-
-(defn print-app-options! []
-  (doall (map println app-options)))
-
-(defn start-app-menu! []
-  (print-app-options!)
-  (let [option-index     (-> application-options count get-input! Integer.)
-        option-function! (option-index->option-fn option-index)]
-    (if option-function!
-      (option-function!)
-      (do (println "Opción inválida\n")
-          (recur)))
-    ))
+(defn multiple-options
+  []
+  "give you the possible options with the app"
+  (println "que quieres hacer ahora, escribe el numero
+  1 transferencia;
+  2 crear un perfil;
+  3 solicitar un credito;
+  4 jugar no tengo amigos
+  5 no quiero hacer nada")
+  (let [options (Integer. (get-input 5))]
+    (what-option options)))
 
 (defn -main
   []
-  (start-app-menu!))
+  (multiple-options))
