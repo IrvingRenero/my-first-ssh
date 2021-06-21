@@ -1,32 +1,27 @@
 (ns my-bank-app-2.core)
 
-(declare what-option multiple-options get-input)
+(declare what-option
+         multiple-options
+         get-input)
 
-
-
-;;we begin the code for create a new-profile 22222222222222222222222222222222222222222222222222222222222
-
+;;we begin the code for create a new-profile
 ;example for to-validate
 #_(def order-details
     {:name "Mitchard Blimmons"
      :email "mitchard.blimmonsgmail.com"})
 
 (def new-profile-validations
-  "vector for validate with new-profile"
-  {:name
-   ["Please enter a name" not-empty]
-   :email
-   ["Please enter an email address" not-empty
-    "Your email address doesn't look like an email address"
-    #(or (empty? %) (re-seq #"@" %))]})
-
+  "vector for validating with new-profile"
+  {:name  ["Please enter a name" not-empty]
+   :email ["Please enter an email address" not-empty
+           "Your email address doesn't look like an email address"
+           #(or (empty? %) (re-seq #"@" %))]})
 
 (defn error-messages-for
   "Return a seq of error messages"
   [to-validate message-validator-pairs]
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
-
 
 (defn validate
   "Returns a map with a vector of errors for each key"
@@ -41,10 +36,7 @@
           {}
           validations))
 
-
 #_(def my-error-name (validate order-details order-details-validations))
-
-
 
 (defmacro if-valid
   "Handle validation more concisely"
@@ -53,22 +45,20 @@
      (if (empty? ~errors-name)
        ~@then-else)))
 
-
 #_(macroexpand
-    '(if-valid order-details order-details-validations my-error-name
-               (println :success)
-               (println :failure my-error-name)))
+   '(if-valid order-details order-details-validations my-error-name
+              (println :success)
+              (println :failure my-error-name)))
 #_(let*
-    [my-error-name (validate order-details order-details-validations)]
-    (if (clojure.core/empty? my-error-name)
-      (println :success)
-      (println :failure my-error-name)))
+   [my-error-name (validate order-details order-details-validations)]
+   (if (clojure.core/empty? my-error-name)
+     (println :success)
+     (println :failure my-error-name)))
 
 ;;the way that must look like error name
 #_(if-valid order-details order-details-validations my-error-name
             (println :success)
             (println :failure my-error-name))
-
 
 (defn add-new-profile
   []
@@ -219,7 +209,7 @@
   (str (nth letters (dec pos))
        (if (get-in board [pos :pegged])
          "0"
-         "-" )))
+         "-")))
 (defn row-positions
   "Return all positions in the given row"
   [row-num]
@@ -302,24 +292,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;; code for transaction;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 (def transaction-validation
   {:curren-required
-         ["Please enter an ammount of your current balance" #(not-empty (first %))
-          "pleease enter the ammount of your transaction required" #(not-empty (second %))
-          "your balance is not enough" #(> (Integer. (first %)) (Integer. (second %)))]
+   ["Please enter an ammount of your current balance" #(not-empty (first %))
+    "pleease enter the ammount of your transaction required" #(not-empty (second %))
+    "your balance is not enough" #(> (Integer. (first %)) (Integer. (second %)))]
    :origin-destiny
-         ["please enter your current country" #(not-empty (first %))
-          "please enter the transaction's destiny country" #(not-empty (first %))
-          "you can't make international transactions"  #(= (first %) (second %))]
+   ["please enter your current country" #(not-empty (first %))
+    "please enter the transaction's destiny country" #(not-empty (first %))
+    "you can't make international transactions"  #(= (first %) (second %))]
    :hour ["it's too late go to sleep" #(< 4 (Integer. %))]})
-
 
 (defn error-messages-for
   "Return a seq of error messages"
   [to-validate message-validator-pairs]
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
-
 
 (defn validate
   "Returns a map with a vector of errors for each key"
@@ -334,7 +323,6 @@
           {}
           validations))
 
-
 (defmacro if-valid
   "Handle validation more concisely"
   [to-validate validations errors-name & then-else]
@@ -342,17 +330,15 @@
      (if (empty? ~errors-name)
        ~@then-else)))
 
-
 #_(macroexpand
-    '(if-valid order-details order-details-validations my-error-name
-               (println :success)
-               (println :failure my-error-name)))
+   '(if-valid order-details order-details-validations my-error-name
+              (println :success)
+              (println :failure my-error-name)))
 #_(let*
-    [my-error-name (validate order-details order-details-validations)]
-    (if (clojure.core/empty? my-error-name)
-      (println :success)
-      (println :failure my-error-name)))
-
+   [my-error-name (validate order-details order-details-validations)]
+   (if (clojure.core/empty? my-error-name)
+     (println :success)
+     (println :failure my-error-name)))
 
 #_(if-valid order-details order-details-validations my-error-name
             (println :success)
@@ -360,8 +346,8 @@
 
 (defn transfer
   []
-  (println "ingresa cuanto tienes, da enter;
-            ingresa cuanto quieres transferir, da enter
+  (println "ingresa cuánto tienes, da enter;
+            ingresa cuánto quieres transferir, da enter
             ingresa tu pais actual, da enter
             ingresa el pais destino, da enter
             ingresa la hora, da enter")
@@ -380,21 +366,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;here start the code for credit;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;I also could make a map with map in the keys for use key to navegate;;;;;;;
-(def credit-example {:salary  "100000"
-                     :ammount-of-credit "6000000"
-                     :credit-type "hipotecario"
-                     :months "36"
-                     :credit_approval  [10000 6000000 "hipotecario" 36]})
+
+
+(def credit-example
+  {:salary            "100000"
+   :ammount-of-credit "6000000"
+   :credit-type       "hipotecario"
+   :months            "36"
+   :credit_approval   [10000 6000000 "hipotecario" 36]})
 
 (defn traditional-interest-anual
   [creddit-approval]
-  (if  (>= (last creddit-approval)  48 ) 0.28
-                                         (if (>= (last creddit-approval) 36) 0.25
-                                                                             (if (>= (last creddit-approval) 24) 0.22
-                                                                                                                 (if (>= (last creddit-approval) 18) 0.21
-                                                                                                                                                     (if (>= (last creddit-approval) 12) 0.2
-                                                                                                                                                                                         (println "el plazo es muy corto")))))))
-(defn exp [x n] (if (zero? n) 1 (* x (exp x (dec n)))))
+  (cond
+    (>= (last creddit-approval)  48)
+    0.28
+
+    (>= (last creddit-approval) 36)
+    0.25
+
+    (>= (last creddit-approval) 24)
+    0.22
+
+    (>= (last creddit-approval) 18)
+    0.21
+
+    (>= (last creddit-approval) 12)
+    (println "el plazo es muy corto")
+    (comment println es un efecto secundario, devuelve un string)))
+
+(defn exp [x n]
+  (if (zero? n)
+    1
+    (* x (exp x (dec n)))))
 
 (defn payment-ammount
   "real amortization formula"
@@ -418,19 +421,18 @@
 
 (defn current-interest
   [creddit-approval]
-  (if (= (nth creddit-approval 2) "hipotecario" )
+  (if (= (nth creddit-approval 2) "hipotecario")
     (let [interests  (hipotecay-interest-monthly creddit-approval)] interests)
     (let [interests  (traditional-interest-monthly creddit-approval)] interests)))
 
 (defn real-monthly-payment
-  "it give you the real ammount for payment with the real amoritzation formula choosing hipotecary or traditional credit"
+  "it gives you the real ammount for payment with the real amoritzation formula choosing hipotecary or traditional credit"
   [creddit-approval]
-  (if (= (nth creddit-approval 2) "hipotecario" )
-    (let [interests  (hipotecay-interest-monthly  creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval) ))
-    (let [interests  (traditional-interest-monthly creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
-
-
-
+  (if (= (nth creddit-approval 2) "hipotecario")
+    (let [interests  (hipotecay-interest-monthly  creddit-approval)]
+      (payment-ammount interests (last creddit-approval) (second creddit-approval)))
+    (let [interests  (traditional-interest-monthly creddit-approval)]
+      (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
 
 (defn error-messages-for
   "Return a seq of error messages"
@@ -438,14 +440,13 @@
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
 
-
 (defn validate
   "Returns a map with a vector of errors for each key"
   [to-validate validations]
   (reduce (fn [errors validation]
             (let [[fieldname validation-check-groups] validation
-                  value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
+                  value                               (get to-validate fieldname)
+                  error-messages                      (error-messages-for value validation-check-groups)]
               (if (empty? error-messages)
                 errors
                 (assoc errors fieldname error-messages))))
@@ -459,17 +460,15 @@
      (if (empty? ~errors-name)
        ~@then-else)))
 
-
 #_(macroexpand
-    '(if-valid order-details order-details-validations my-error-name
-               (println :success)
-               (println :failure my-error-name)))
+   '(if-valid order-details order-details-validations my-error-name
+              (println :success)
+              (println :failure my-error-name)))
 #_(let*
-    [my-error-name (validate order-details order-details-validations)]
-    (if (clojure.core/empty? my-error-name)
-      (println :success)
-      (println :failure my-error-name)))
-
+   [my-error-name (validate order-details order-details-validations)]
+   (if (clojure.core/empty? my-error-name)
+     (println :success)
+     (println :failure my-error-name)))
 
 #_(if-valid order-details order-details-validations my-error-name
             (println :success)
@@ -489,7 +488,7 @@
     "el plazo es muy grande" #(< (Integer. %) 60)]
    :credit_approval
    ["si es el único código de error significa que no cumples con los requisitos; prueba aumentar el plazo o reducir el monto"
-    #(> (/ (first %) 3) (real-monthly-payment %)  )]})
+    #(> (/ (first %) 3) (real-monthly-payment %))]})
 
 (defn credit
   []
@@ -506,24 +505,26 @@
                     :credit_approval [(Integer. salary) (Integer. ammount) type (Integer. time)]}
         my-error-name (validate map-credit credit-validation)]
     (if-valid map-credit  credit-validation my-error-name
-              ((println :success )
-               (println (str "felicidades tu crédito fue aprobado por: " ammount) )
+              ((println :success)
+               (println (str "felicidades tu crédito fue aprobado por: " ammount))
                (println (str "tus mensualidades seran de: " (real-monthly-payment (get map-credit :credit_approval)) " MXN"))
-               (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%") )
+               (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%"))
                (println (str "tu pago en el plazo total sera: "  (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) "MXN"))
-               (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount) ))))
+               (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount)))))
               (println :failure my-error-name))))
 
 
 ;; to choose what is going to do the program;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 (defn what-option
   [options]
   (if  (= 1 options) (transfer)
-                     (if (= 2 options) (add-new-profile)
-                                       (if (= 3 options) (credit)
-                                                         (if (= 4 options) (the-game)
-                                                                           (if (= 5 options) (println "adios")
-                                                                                             (multiple-options)))))))
+       (if (= 2 options) (add-new-profile)
+           (if (= 3 options) (credit)
+               (if (= 4 options) (the-game)
+                   (if (= 5 options) (println "adios")
+                       (multiple-options)))))))
 (defn get-input
   "Waits for user to enter text and hit enter, then cleans the input"
   ([] (get-input nil))
@@ -532,8 +533,6 @@
      (if (empty? input)
        default
        (clojure.string/lower-case input)))))
-
-
 
 (defn multiple-options
   []
@@ -546,9 +545,6 @@
   5 no quiero hacer nada")
   (let [options (Integer. (get-input 5))]
     (what-option options)))
-
-
-
 
 (defn -main
   []

@@ -9,12 +9,12 @@
 
 (defn traditional-interest-anual
   [creddit-approval]
-  (if  (>= (last creddit-approval)  48 ) 0.28
-                                         (if (>= (last creddit-approval) 36) 0.25
-                                                                             (if (>= (last creddit-approval) 24) 0.22
-                                                                                                                 (if (>= (last creddit-approval) 18) 0.21
-                                                                                                                                                     (if (>= (last creddit-approval) 12) 0.2
-                                                                                                                                                                                         (println "el plazo es muy corto")))))))
+  (if  (>= (last creddit-approval)  48) 0.28
+       (if (>= (last creddit-approval) 36) 0.25
+           (if (>= (last creddit-approval) 24) 0.22
+               (if (>= (last creddit-approval) 18) 0.21
+                   (if (>= (last creddit-approval) 12) 0.2
+                       (println "el plazo es muy corto")))))))
 (defn exp [x n] (if (zero? n) 1 (* x (exp x (dec n)))))
 
 (defn payment-ammount
@@ -39,26 +39,22 @@
 
 (defn current-interest
   [creddit-approval]
-  (if (= (nth creddit-approval 2) "hipotecario" )
+  (if (= (nth creddit-approval 2) "hipotecario")
     (let [interests  (hipotecay-interest-monthly creddit-approval)] interests)
     (let [interests  (traditional-interest-monthly creddit-approval)] interests)))
 
 (defn real-monthly-payment
   "it give you the real ammount for payment with the real amoritzation formula choosing hipotecary or traditional credit"
   [creddit-approval]
-  (if (= (nth creddit-approval 2) "hipotecario" )
-    (let [interests  (hipotecay-interest-monthly  creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval) ))
+  (if (= (nth creddit-approval 2) "hipotecario")
+    (let [interests  (hipotecay-interest-monthly  creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))
     (let [interests  (traditional-interest-monthly creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
-
-
-
 
 (defn error-messages-for
   "Return a seq of error messages"
   [to-validate message-validator-pairs]
   (map first (filter #(not ((second %) to-validate))
                      (partition 2 message-validator-pairs))))
-
 
 (defn validate
   "Returns a map with a vector of errors for each key"
@@ -80,17 +76,15 @@
      (if (empty? ~errors-name)
        ~@then-else)))
 
-
 #_(macroexpand
-    '(if-valid order-details order-details-validations my-error-name
-               (println :success)
-               (println :failure my-error-name)))
+   '(if-valid order-details order-details-validations my-error-name
+              (println :success)
+              (println :failure my-error-name)))
 #_(let*
-    [my-error-name (validate order-details order-details-validations)]
-    (if (clojure.core/empty? my-error-name)
-      (println :success)
-      (println :failure my-error-name)))
-
+   [my-error-name (validate order-details order-details-validations)]
+   (if (clojure.core/empty? my-error-name)
+     (println :success)
+     (println :failure my-error-name)))
 
 #_(if-valid order-details order-details-validations my-error-name
             (println :success)
@@ -110,7 +104,7 @@
     "el plazo es muy grande" #(< (Integer. %) 60)]
    :credit_approval
    ["si es el único código de error significa que no cumples con los requisitos; prueba aumentar el plazo o reducir el monto"
-    #(> (/ (first %) 3) (real-monthly-payment %)  )]})
+    #(> (/ (first %) 3) (real-monthly-payment %))]})
 
 (defn credit
   []
@@ -127,10 +121,15 @@
                     :credit_approval [(Integer. salary) (Integer. ammount) type (Integer. time)]}
         my-error-name (validate map-credit credit-validation)]
     (if-valid map-credit  credit-validation my-error-name
+<<<<<<< HEAD
               ((println :success )
                (println (str "felicidades tu crédito fue aprobado por: " ammount) )
+=======
+              ((println :success)
+               (println (str "felicidades tu crédito fue aprobado por: " (nth credit-data 1)))
+>>>>>>> b25219df4a644c606f6a207e0ae2a821d32b8273
                (println (str "tus mensualidades seran de: " (real-monthly-payment (get map-credit :credit_approval)) " MXN"))
-               (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%") )
+               (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%"))
                (println (str "tu pago en el plazo total sera: "  (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) "MXN"))
                (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount) ))))
               (println :failure my-error-name))))
