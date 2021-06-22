@@ -25,7 +25,6 @@
          "0"
          "-")))
 
-
 (defn row-positions
   "Return all positions in the given row"
   [row-num]

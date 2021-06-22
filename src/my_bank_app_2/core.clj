@@ -1,6 +1,6 @@
 (ns my-bank-app-2.core
-  (:require [my-bank-app-2.options.no-friends.core :as no-friends.core]
-            [my-bank-app-2.helpers.io :as helpers.io]))
+  (:require [my-bank-app-2.helpers.io :as helpers.io]
+            [my-bank-app-2.options.no-friends.core :as no-friends.core]))
 
 (declare what-option
          multiple-options)
@@ -313,8 +313,6 @@
        (dec option-index)
        nil))
 
-
-
 (def ^:private app-options
   (map-indexed (fn [index text] (str (inc index) ". " text ":"))
                (keys application-options)))
@@ -329,8 +327,7 @@
     (if option-function!
       (option-function!)
       (do (println "Opción inválida\n")
-          (recur)))
-    ))
+          (recur)))))
 
 (defn -main
   []

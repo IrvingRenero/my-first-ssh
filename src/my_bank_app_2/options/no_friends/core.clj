@@ -1,29 +1,37 @@
 (ns my-bank-app-2.options.no-friends.core
   (:require [my-bank-app-2.helpers.io :as helpers.io]
             [my-bank-app-2.options.no-friends.board :as board]
-            [my-bank-app-2.options.no-friends.io.prompt :as io.prompt]))
+            [my-bank-app-2.options.no-friends.io :as io]
+            [my-bank-app-2.options.no-friends.move :as move]))
 
+(defn game-over
+  "Announce the game is over and prompt to play again"
+  [board]
+  (let [remaining-pegs (count (filter :pegged (vals board)))]
+    (println "Game over! You had" remaining-pegs "pegs left:")
+    (board/print-board board)
+    (println "Play again? y/n [y]")
+    (let [input (helpers.io/get-input! "y")]
+      (if (= "y" input)
+        (io/prompt-rows)
+        (do
+          (println "Bye!")
+          (System/exit 0))))))
 
-(declare successful-move prompt-move game-over query-rows)
+(defn user-entered-valid-move
+  "Handles the next step after a user has entered a valid move"
+  [board]
+  (if (move/can-move? board)
+    (io/prompt-and-maybe-move! board)
+    (game-over board)))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(defn user-entered-invalid-move
+  "Handles the next step after a user has entered an invalid move"
+  [board]
+  (println "\n!!! That was an invalid move :(\n")
+  (io/prompt-and-maybe-move! board))
 
 (defn start!
   []
-  (io.prompt/prompt-rows))
+  (io/prompt-rows! user-entered-valid-move
+                   user-entered-invalid-move))
