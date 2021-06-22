@@ -17,7 +17,7 @@
     invalid-move-handler!
     board]
    (println "\nHere's your board:")
-   (board/print-board board)
+   (board/print-board! board)
    (println "enter the letter that you want move, press enter, and then, the second one")
    (let [input (map letter->pos (seq [(read-line) (read-line)]))]
      (if-let [new-board (move/make-move board (first input) (second input))]
@@ -27,7 +27,7 @@
 (defn prompt-and-maybe-move!
   [board]
   (println "\nHere's your board:")
-  (board/print-board board)
+  (board/print-board! board)
   (println "enter the letter that you want move, press enter, and then, the second one")
   (let [input (map letter->pos (seq [(read-line) (read-line)]))]
     (move/make-move board (first input) (second input))))
@@ -37,7 +37,7 @@
    invalid-move-handler!
    board]
   (println "Here's your board:")
-  (board/print-board board)
+  (board/print-board! board)
   (println "Remove which peg? [e]")
   (prompt-move valid-move-handler!
                invalid-move-handler!

@@ -9,7 +9,7 @@
   [board]
   (let [remaining-pegs (count (filter :pegged (vals board)))]
     (println "Game over! You had" remaining-pegs "pegs left:")
-    (board/print-board board)
+    (board/print-board! board)
     (println "Play again? y/n [y]")
     (let [input (helpers.io/get-input! "y")]
       (if (= "y" input)
