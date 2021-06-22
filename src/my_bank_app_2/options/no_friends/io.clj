@@ -11,8 +11,6 @@
   (inc (- (int (first letter)) board/alpha-start)))
 
 (defn prompt-move
-  ([any-handler board]
-   (prompt-move any-handler any-handler board))
   ([valid-move-handler!
     invalid-move-handler!
     board]
@@ -21,16 +19,8 @@
    (println "enter the letter that you want move, press enter, and then, the second one")
    (let [input (map letter->pos (seq [(read-line) (read-line)]))]
      (if-let [new-board (move/make-move board (first input) (second input))]
-       (valid-move-handler! new-board)
-       (invalid-move-handler! board)))))
-
-(defn prompt-and-maybe-move!
-  [board]
-  (println "\nHere's your board:")
-  (board/print-board board)
-  (println "enter the letter that you want move, press enter, and then, the second one")
-  (let [input (map letter->pos (seq [(read-line) (read-line)]))]
-    (move/make-move board (first input) (second input))))
+       (valid-move-handler! valid-move-handler! invalid-move-handler! new-board )
+       (invalid-move-handler! valid-move-handler! invalid-move-handler! board)))))
 
 (defn- prompt-empty-peg!
   [valid-move-handler!

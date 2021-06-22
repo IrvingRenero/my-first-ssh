@@ -20,16 +20,16 @@
 
 (defn user-entered-valid-move
   "Handles the next step after a user has entered a valid move"
-  [board]
+  [ valid-move-handler! invalid-move-handler! board]
   (if (move/can-move? board)
-    (io/prompt-and-maybe-move! board)
+    (io/prompt-move  valid-move-handler! invalid-move-handler! board )
     (game-over board)))
 
 (defn user-entered-invalid-move
   "Handles the next step after a user has entered an invalid move"
-  [board]
+  [ valid-move-handler! invalid-move-handler! board]
   (println "\n!!! That was an invalid move :(\n")
-  (io/prompt-and-maybe-move! board))
+  (io/prompt-move valid-move-handler! invalid-move-handler! board))
 
 (defn start!
   []
