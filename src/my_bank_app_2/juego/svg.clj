@@ -1,6 +1,6 @@
 (ns my-bank-app-2.juego.svg)
 
-(declare successful-move prompt-move game-over query-rows prompt-rows)
+(declare prompt-move game-over query-rows prompt-rows)
 
 (defn tri*
   "Generates lazy sequence of triangular numbers"
