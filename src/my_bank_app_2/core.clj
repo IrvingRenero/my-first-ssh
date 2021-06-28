@@ -1,5 +1,7 @@
 (ns my-bank-app-2.core
   (:require [my-bank-app-2.helpers.io :as helpers.io]
+            [my-bank-app-2.credito.core :as credito.core]
+            [my-bank-app-2.helpers.validation :refer [if-valid validate]]
             [my-bank-app-2.options.no-friends.core :as no-friends.core]))
 
 (declare what-option
@@ -18,54 +20,11 @@
            "Your email address doesn't look like an email address"
            #(or (empty? %) (re-seq #"@" %))]})
 
-(defn error-messages-for
-  "Return a seq of error messages"
-  [to-validate message-validator-pairs]
-  (map first (filter #(not ((second %) to-validate))
-                     (partition 2 message-validator-pairs))))
-
-(defn validate
-  "Returns a map with a vector of errors for each key"
-  [to-validate validations]
-  (reduce (fn [errors validation]
-            (let [[fieldname validation-check-groups] validation
-                  value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
-              (if (empty? error-messages)
-                errors
-                (assoc errors fieldname error-messages))))
-          {}
-          validations))
-
-#_(def my-error-name (validate order-details order-details-validations))
-
-(defmacro if-valid
-  "Handle validation more concisely"
-  [to-validate validations errors-name & then-else]
-  `(let [~errors-name (validate ~to-validate ~validations)]
-     (if (empty? ~errors-name)
-       ~@then-else)))
-
-#_(macroexpand
-   '(if-valid order-details order-details-validations my-error-name
-              (println :success)
-              (println :failure my-error-name)))
-#_(let*
-   [my-error-name (validate order-details order-details-validations)]
-   (if (clojure.core/empty? my-error-name)
-     (println :success)
-     (println :failure my-error-name)))
-
-;;the way that must look like error name
-#_(if-valid order-details order-details-validations my-error-name
-            (println :success)
-            (println :failure my-error-name))
-
 (defn add-new-profile
   []
   ;;related function with option 2
   (println "ingresa un nombre, da enter; ingresa tu email da enter")
-  (let [[name email ] (seq [(read-line) (read-line)])
+  (let [[name email] (seq [(read-line) (read-line)])
         map-newprofile {:name name :email email}
         my-error-name (validate map-newprofile new-profile-validations)]
     (if-valid map-newprofile new-profile-validations my-error-name
@@ -87,46 +46,6 @@
     "please enter the transaction's destiny country" #(not-empty (first %))
     "you can't make international transactions"  #(= (first %) (second %))]
    :hour ["it's too late go to sleep" #(< 4 (Integer. %))]})
-
-(defn error-messages-for
-  "Return a seq of error messages"
-  [to-validate message-validator-pairs]
-  (map first (filter #(not ((second %) to-validate))
-                     (partition 2 message-validator-pairs))))
-
-(defn validate
-  "Returns a map with a vector of errors for each key"
-  [to-validate validations]
-  (reduce (fn [errors validation]
-            (let [[fieldname validation-check-groups] validation
-                  value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
-              (if (empty? error-messages)
-                errors
-                (assoc errors fieldname error-messages))))
-          {}
-          validations))
-
-(defmacro if-valid
-  "Handle validation more concisely"
-  [to-validate validations errors-name & then-else]
-  `(let [~errors-name (validate ~to-validate ~validations)]
-     (if (empty? ~errors-name)
-       ~@then-else)))
-
-#_(macroexpand
-   '(if-valid order-details order-details-validations my-error-name
-              (println :success)
-              (println :failure my-error-name)))
-#_(let*
-   [my-error-name (validate order-details order-details-validations)]
-   (if (clojure.core/empty? my-error-name)
-     (println :success)
-     (println :failure my-error-name)))
-
-#_(if-valid order-details order-details-validations my-error-name
-            (println :success)
-            (println :failure my-error-name))
 
 (defn transfer
   []
@@ -217,46 +136,6 @@
     (let [interests  (traditional-interest-monthly creddit-approval)]
       (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
 
-(defn error-messages-for
-  "Return a seq of error messages"
-  [to-validate message-validator-pairs]
-  (map first (filter #(not ((second %) to-validate))
-                     (partition 2 message-validator-pairs))))
-
-(defn validate
-  "Returns a map with a vector of errors for each key"
-  [to-validate validations]
-  (reduce (fn [errors validation]
-            (let [[fieldname validation-check-groups] validation
-                  value                               (get to-validate fieldname)
-                  error-messages                      (error-messages-for value validation-check-groups)]
-              (if (empty? error-messages)
-                errors
-                (assoc errors fieldname error-messages))))
-          {}
-          validations))
-
-(defmacro if-valid
-  "Handle validation more concisely"
-  [to-validate validations errors-name & then-else]
-  `(let [~errors-name (validate ~to-validate ~validations)]
-     (if (empty? ~errors-name)
-       ~@then-else)))
-
-#_(macroexpand
-   '(if-valid order-details order-details-validations my-error-name
-              (println :success)
-              (println :failure my-error-name)))
-#_(let*
-   [my-error-name (validate order-details order-details-validations)]
-   (if (clojure.core/empty? my-error-name)
-     (println :success)
-     (println :failure my-error-name)))
-
-#_(if-valid order-details order-details-validations my-error-name
-            (println :success)
-            (println :failure my-error-name))
-
 ;;vector with validations and error codes for the credit;;;
 (def credit-validation
   {:salary
@@ -303,7 +182,7 @@
 (def ^:private application-options
   {"transferencia"         transfer
    "crear un perfil"       add-new-profile
-   "solicitar un credito"  credit
+   "solicitar un credito"  credito.core/credit
    "jugar no tengo amigos" no-friends.core/start!
    "no quiero hacer nada"  #(println "adios")})
 

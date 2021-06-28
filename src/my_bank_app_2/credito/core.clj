@@ -1,4 +1,5 @@
-(ns my-bank-app-2.credito.svg)
+(ns my-bank-app-2.credito.core
+  (:require [my-bank-app-2.helpers.validation :refer [if-valid validate]]))
 
 ;;I also could make a map with map in the keys for use key to navegate;;;;;;;
 (def credit-example {:salary  "100000"
@@ -50,32 +51,6 @@
     (let [interests  (hipotecay-interest-monthly  creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))
     (let [interests  (traditional-interest-monthly creddit-approval)] (payment-ammount interests (last creddit-approval) (second creddit-approval)))))
 
-(defn error-messages-for
-  "Return a seq of error messages"
-  [to-validate message-validator-pairs]
-  (map first (filter #(not ((second %) to-validate))
-                     (partition 2 message-validator-pairs))))
-
-(defn validate
-  "Returns a map with a vector of errors for each key"
-  [to-validate validations]
-  (reduce (fn [errors validation]
-            (let [[fieldname validation-check-groups] validation
-                  value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
-              (if (empty? error-messages)
-                errors
-                (assoc errors fieldname error-messages))))
-          {}
-          validations))
-
-(defmacro if-valid
-  "Handle validation more concisely"
-  [to-validate validations errors-name & then-else]
-  `(let [~errors-name (validate ~to-validate ~validations)]
-     (if (empty? ~errors-name)
-       ~@then-else)))
-
 #_(macroexpand
    '(if-valid order-details order-details-validations my-error-name
               (println :success)
@@ -112,7 +87,7 @@
   (println "ingresa tu salario, da enter;
             ingresa el monto de credito que solicitas, da enter
             ingresa el tipo de credito: tradicional/hipotecario, da enter
-            ingresa el plazo que te gustaria")
+                    ingresa el plazo que te gustaria")
   (let [[salary ammount type time]  (seq [(read-line) (read-line) (read-line) (read-line)])
         map-credit {:salary salary
                     :ammount-of-credit ammount
@@ -121,15 +96,10 @@
                     :credit_approval [(Integer. salary) (Integer. ammount) type (Integer. time)]}
         my-error-name (validate map-credit credit-validation)]
     (if-valid map-credit  credit-validation my-error-name
-<<<<<<< HEAD
-              ((println :success )
-               (println (str "felicidades tu crédito fue aprobado por: " ammount) )
-=======
               ((println :success)
-               (println (str "felicidades tu crédito fue aprobado por: " (nth credit-data 1)))
->>>>>>> b25219df4a644c606f6a207e0ae2a821d32b8273
+               (println (str "felicidades tu crédito fue aprobado por: " ammount))
                (println (str "tus mensualidades seran de: " (real-monthly-payment (get map-credit :credit_approval)) " MXN"))
                (println (str "tu tasa anual es de: " (* 1200 (current-interest (get map-credit :credit_approval))) "%"))
                (println (str "tu pago en el plazo total sera: "  (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) "MXN"))
-               (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount) ))))
+               (println (str "el monto por intereses que pagaras en total sera de: " (- (* (real-monthly-payment (get map-credit :credit_approval)) (last (get map-credit :credit_approval))) (Integer. ammount)))))
               (println :failure my-error-name))))

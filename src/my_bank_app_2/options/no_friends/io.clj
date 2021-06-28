@@ -18,8 +18,8 @@
    (board/print-board board)
    (println "enter the letter that you want move, press enter, and then, the second one")
    (let [input (map letter->pos (seq [(read-line) (read-line)]))]
-     (if-let [new-board (move/make-move board (first input) (second input))]
-       (valid-move-handler! valid-move-handler! invalid-move-handler! new-board )
+     (if-let [new-board (move/maybe-make-move board (first input) (second input))]
+       (valid-move-handler! valid-move-handler! invalid-move-handler! new-board)
        (invalid-move-handler! valid-move-handler! invalid-move-handler! board)))))
 
 (defn- prompt-empty-peg!
