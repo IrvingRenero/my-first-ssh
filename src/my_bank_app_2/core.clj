@@ -1,6 +1,6 @@
 (ns my-bank-app-2.core
-  (:require [my-bank-app-2.helpers.io :as helpers.io]
-            [my-bank-app-2.credito.core :as credito.core]
+  (:require [my-bank-app-2.credito.core :as credito.core]
+            [my-bank-app-2.helpers.io :as helpers.io]
             [my-bank-app-2.helpers.validation :refer [if-valid validate]]
             [my-bank-app-2.options.no-friends.core :as no-friends.core]))
 
